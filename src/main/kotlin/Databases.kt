@@ -30,7 +30,7 @@ fun Application.configureDatabases() {
             source = OpenApiDocSource.Routing(
                 contentType = ContentType.Application.Json
             )
-        }       // Create user
+        }
         post("/register") {
             val data = call.receive<CardData>()
 
@@ -128,6 +128,14 @@ fun Application.configureDatabases() {
                 }
 
             }
+        }
+        delete("/card/{uuid}") {
+            val uuid = call.parameters["uuid"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
+            cardService.delete(uuid)
+            call.respond(HttpStatusCode.NoContent)
+        }.describe {
+            summary = "카드 삭제"
+            description = "해당 UUID의 카드 정보와 모든 거래 기록을 삭제합니다."
         }
     }
 }
